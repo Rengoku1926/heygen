@@ -10,6 +10,8 @@ import {
 } from "../ui/sidebar";
 import { User } from "lucide-react";
 import SidebarMenuItems from "./sidebar-menu-items";
+import { Credits } from "./credits";
+// import Upgrade from "./upgrade";
 
 export async function AppSidebar() {
   return (
@@ -29,7 +31,12 @@ export async function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="px-4 py-4">
+        <div className="mb-2 flex w-full items-center justify-center gap-1 text-xs">
+          <Credits />
+          {/* <Upgrade /> */}
+        </div>
         <div className="mb-3 text-xs text-muted-foreground">Account</div>
+
         <UserButton
           variant="ghost"
           size="default"

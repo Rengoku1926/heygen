@@ -10,15 +10,13 @@ import {
   Video,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-// import { PhotoToVideoModal } from "./modals/photo-to-video-modal";
 import { Button } from "./ui/button";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-// import { getVideoDuration } from "~/utils/media";
-// import { updateCreationName } from "~/actions/creations";
-// import { VideoTranslationModal } from "./modals/video-translation-modal";
-// import { ChangeVideoAudioModal } from "./modals/change-video-audio-modal";
+import { getVideoDuration } from "~/utils/media";
 import { toast } from "sonner";
 import { PhotoToVideoModal } from "./modal/photo-to-video-modal";
+import { VideoTranslationModal } from "./modal/video-translation-modal";
+import { ChangeVideoAudioModal } from "./modal/change-video-audio-modal";
 
 const features = [
   {
@@ -51,9 +49,9 @@ type Creation = {
 };
 
 export function ClientHome({
-//   recentCreations,
+  recentCreations,
 }: {
-//   recentCreations: Creation[];
+  recentCreations: Creation[];
 }) {
   const [photoModalOpen, setPhotoModalOpen] = useState(false);
   const [translateModalOpen, setTranslateModalOpen] = useState(false);
@@ -80,17 +78,17 @@ export function ClientHome({
     }
   }, [searchParams, router, pathname]);
 
-//   useEffect(() => {
-//     recentCreations.forEach((creation) => {
-//       if (creation.videoUrl && creation.status === "completed") {
-//         getVideoDuration(creation.videoUrl)
-//           .then((duration) => {
-//             setDurations((prev) => ({ ...prev, [creation.id]: duration }));
-//           })
-//           .catch(console.error);
-//       }
-//     });
-//   }, [recentCreations]);
+  useEffect(() => {
+    recentCreations.forEach((creation) => {
+      if (creation.videoUrl && creation.status === "completed") {
+        getVideoDuration(creation.videoUrl)
+          .then((duration) => {
+            setDurations((prev) => ({ ...prev, [creation.id]: duration }));
+          })
+          .catch(console.error);
+      }
+    });
+  }, [recentCreations]);
 
   const handlePlayPause = async (id: string) => {
     const video = videoRefs.current[id];
@@ -106,16 +104,16 @@ export function ClientHome({
     }
   };
 
-  const handleTitleUpdate = async () => {
-    if (!editingId || !editingTitle || !editingType) {
-      setEditingId(null);
-      return;
-    }
+  // const handleTitleUpdate = async () => {
+  //   if (!editingId || !editingTitle || !editingType) {
+  //     setEditingId(null);
+  //     return;
+  //   }
 
-    // await updateCreationName(editingId, editingTitle, editingType);
-    setEditingId(null);
-    setEditingType(null);
-  };
+  //   await updateCreationName(editingId, editingTitle, editingType);
+  //   setEditingId(null);
+  //   setEditingType(null);
+  // };
 
   return (
     <div className="p-8">
@@ -155,7 +153,7 @@ export function ClientHome({
         ))}
       </div>
 
-      {/* {recentCreations.length > 0 && (
+      {recentCreations.length > 0 && (
         <>
           <div className="mb-4 flex items-center gap-1">
             <h2 className="text-lg font-semibold">Recent creations</h2>
@@ -242,14 +240,14 @@ export function ClientHome({
                       value={editingTitle}
                       onChange={(e) => setEditingTitle(e.target.value)}
                       autoFocus
-                      onBlur={handleTitleUpdate}
-                      onKeyDown={async (e) => {
-                        if (e.key === "Enter") {
-                          await handleTitleUpdate();
-                        } else if (e.key === "Escape") {
-                          setEditingId(null);
-                        }
-                      }}
+                      // onBlur={handleTitleUpdate}
+                      // onKeyDown={async (e) => {
+                      //   if (e.key === "Enter") {
+                      //     await handleTitleUpdate();
+                      //   } else if (e.key === "Escape") {
+                      //     setEditingId(null);
+                      //   }
+                      // }}
                       type="text"
                       className="w-full rounded border border-blue-500 bg-white p-1 text-sm shadow-sm"
                     />
@@ -273,20 +271,24 @@ export function ClientHome({
             ))}
           </div>
         </>
-      )} */}
+      )}
 
       <PhotoToVideoModal
         open={photoModalOpen}
         onOpenChange={setPhotoModalOpen}
       />
-      {/* <VideoTranslationModal
+      <VideoTranslationModal
         open={translateModalOpen}
         onOpenChange={setTranslateModalOpen}
       />
       <ChangeVideoAudioModal
         open={changeVideoAudioOpen}
         onOpenChange={setChangeVideoAudioOpen}
-      /> */}
+      />
     </div>
   );
 }
+
+// function updateCreationName(editingId: string, editingTitle: string, editingType: string) {
+//   throw new Error("Function not implemented.");
+// }

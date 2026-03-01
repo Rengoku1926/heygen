@@ -4,8 +4,6 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { useAudioPlayer } from "~/hooks/useMediaPlayer";
-import { getPresignedGetUrl } from "~/actions/generation";
-import { useState, useEffect } from "react";
 
 export interface Voice {
   id: string;
@@ -17,13 +15,15 @@ export interface Voice {
   s3Key: string;
 }
 
-const heyGenLibraryVoiceKeys = [
+const heyGenLibraryVoice: Voice[] = [
   {
     id: "v1",
     name: "Jeff",
     tags: ["Deep", "American", "Assertive"],
     accent: "American",
     flag: "🇺🇸",
+    audioSrc:
+      "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/voices/1.wav",
     s3Key: "samples/voices/1.wav",
   },
   {
@@ -32,7 +32,9 @@ const heyGenLibraryVoiceKeys = [
     tags: ["Articulate", "American"],
     accent: "American",
     flag: "🇺🇸",
-    s3Key: "samples/voices/1.wav",
+    audioSrc:
+      "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/voices/1.wav",
+    s3Key: "samples/voices/4.wav",
   },
   {
     id: "v3",
@@ -40,6 +42,8 @@ const heyGenLibraryVoiceKeys = [
     tags: ["Direct", "American"],
     accent: "American",
     flag: "🇺🇸",
+    audioSrc:
+      "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/voices/4.wav",
     s3Key: "samples/voices/4.wav",
   },
 ];
@@ -99,26 +103,6 @@ export default function ChooseVoiceModal({
   onAudioUploaded: (file: File) => void;
 }) {
   const { playingSrc, togglePlay } = useAudioPlayer();
-  const [heyGenLibraryVoice, setHeyGenLibraryVoice] = useState<Voice[]>([]);
-
-  useEffect(() => {
-    if (open && heyGenLibraryVoice.length === 0) {
-      const loadVoices = async () => {
-        try {
-          const voicesWithUrls = await Promise.all(
-            heyGenLibraryVoiceKeys.map(async (voice) => {
-              const url = await getPresignedGetUrl(voice.s3Key);
-              return { ...voice, audioSrc: url };
-            }),
-          );
-          setHeyGenLibraryVoice(voicesWithUrls);
-        } catch (error) {
-          console.error("Failed to load sample voices", error);
-        }
-      };
-      loadVoices();
-    }
-  }, [open, heyGenLibraryVoice.length]);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl">

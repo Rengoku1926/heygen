@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "~/server/db";
 // import { Polar } from "@polar-sh/sdk";
-import { env } from "~/env";
+// import { env } from "~/env";
 // import {
 //   polar,
 //   checkout,

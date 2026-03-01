@@ -11,15 +11,14 @@ export function Providers({ children }: { children: ReactNode }) {
 
     return (
         <AuthUIProvider
-            authClient={authClient}
-            navigate={router.push}
-            replace={router.replace}
-            onSessionChange={() => {
-                // Clear router cache (protected routes)
-                router.refresh()
-            }}
-            Link={Link}
-        >
+    authClient={authClient}
+    navigate={(path) => router.push(path)}
+    replace={(path) => router.replace(path)}
+    onSessionChange={() => {
+        router.refresh()
+    }}
+    Link={Link}
+>
             {children}
         </AuthUIProvider>
     )

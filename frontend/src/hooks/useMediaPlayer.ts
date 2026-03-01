@@ -18,18 +18,25 @@ export function useAudioPlayer() {
   }, []);
 
   const togglePlay = (src: string) => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const audio = audioRef.current;
+  if (!audio) return;
 
-    if (playingSrc === src) {
-      audio.pause();
-      setPlayingSrc(null);
-    } else {
-      audio.src = src;
-      audio.play().catch((e) => console.error("Error playing audio"));
-      setPlayingSrc(src);
-    }
-  };
+  if (playingSrc === src) {
+    audio.pause();
+    setPlayingSrc(null);
+  } else {
+    audio.pause();
+    audio.src = src;
+    audio.load();
+    audio
+      .play()
+      .then(() => setPlayingSrc(src))
+      .catch((e) => {
+        console.error("Error playing audio", e);
+        setPlayingSrc(null);
+      });
+  }
+};
 
   return {
     playingSrc,

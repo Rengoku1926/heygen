@@ -1,7 +1,7 @@
 import { AccountView } from "@daveyplate/better-auth-ui";
 import { accountViewPaths } from "@daveyplate/better-auth-ui/server";
 import { BackButton } from "~/components/account/back-button";
-import { Button } from "~/components/ui/button";
+// import { Button } from "~/components/ui/button";
 
 export const dynamicParams = false;
 

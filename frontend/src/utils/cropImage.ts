@@ -4,11 +4,14 @@ const createImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const image = new Image();
     image.addEventListener("load", () => resolve(image));
-    image.addEventListener("error", () =>
-      reject(new Error("Failed to load image's src")),
-    );
+    image.addEventListener("error", (e) => {
+      console.error("Image load error:", e, "URL:", url);
+      reject(new Error("Failed to load image's src"));
+    });
     image.setAttribute("crossOrigin", "anonymous");
-    image.src = url;
+    // Append a cache-busting query parameter to bypass browser CORS cache
+    const cacheBustUrl = url + (url.includes('?') ? '&' : '?') + 'not-from-cache-please';
+    image.src = cacheBustUrl;
   });
 
 export default async function getCroppedImg(

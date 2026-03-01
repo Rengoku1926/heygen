@@ -15,9 +15,10 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Input } from "../ui/input";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import AudioUploadModal from "../audio-upload-modal";
 import ChooseVoiceModal, { type Voice } from "../choose-voice-modal";
 import Cropper, { type Area } from "react-easy-crop";
 import { Switch } from "../ui/switch";
@@ -28,16 +29,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { toast } from "sonner";
-import AudioUploadModal from "../audio-upload-modal";
-import { useAudioPlayer } from "~/hooks/useMediaPlayer";
 import getCroppedImg from "~/utils/cropImage";
-import { getPresignedUrl, getPresignedGetUrl, photoToVideo } from "~/actions/generation";
+import { getPresignedUrl, photoToVideo } from "~/actions/generation";
+import { toast } from "sonner";
+import { useAudioPlayer } from "~/hooks/useMediaPlayer";
+import Image from "next/image";
 
-const samplePhotosKeys = [
-  "samples/photos/0001.jpg",
-  "samples/photos/0003.jpg",
-  "samples/photos/0008.jpg",
+const samplePhotos = [
+  {
+    s3Key: "samples/photos/0001.jpg",
+    url: "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/photos/0001.jpg",
+  },
+  {
+    s3Key: "samples/photos/0003.jpg",
+    url: "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/photos/0003.jpg",
+  },
+  {
+    s3Key: "samples/photos/0008.jpg",
+    url: "https://public-heygen-bucket-1926.s3.us-east-1.amazonaws.com/photos/0008.jpg",
+  },
 ];
 
 export function PhotoToVideoModal({
@@ -71,9 +81,6 @@ export function PhotoToVideoModal({
   const [resolution, setResolution] = useState("512");
 
   const [loading, setLoading] = useState(false);
-  const [samplePhotos, setSamplePhotos] = useState<
-    { s3Key: string; url: string }[]
-  >([]);
 
   const { playingSrc, togglePlay } = useAudioPlayer();
 
@@ -198,25 +205,6 @@ export function PhotoToVideoModal({
     onOpenChange(false);
   };
 
-  useEffect(() => {
-    if (open && samplePhotos.length === 0) {
-      const loadSamplePhotos = async () => {
-        try {
-          const photosWithUrls = await Promise.all(
-            samplePhotosKeys.map(async (key) => {
-              const url = await getPresignedGetUrl(key);
-              return { s3Key: key, url };
-            }),
-          );
-          setSamplePhotos(photosWithUrls);
-        } catch (error) {
-          console.error("Failed to load sample photos", error);
-        }
-      };
-      loadSamplePhotos();
-    }
-  }, [open, samplePhotos.length]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="h-fit max-h-[95%] w-full min-w-[95%] overflow-y-auto lg:w-full lg:max-w-5xl lg:min-w-fit">
@@ -273,8 +261,11 @@ export function PhotoToVideoModal({
               ) : selectedPhotoUrl ? (
                 <div className="flex flex-col items-center justify-between gap-4">
                   <div className="relative">
-                    <img
+                    <Image
                       src={selectedPhotoUrl}
+                      alt="Selected photo"
+                      width={340}
+                      height={340}
                       crossOrigin="anonymous"
                       className="max-h-[340px] max-w-full rounded-xl border object-contain md:max-w-[340px]"
                     />
@@ -313,11 +304,14 @@ export function PhotoToVideoModal({
                     </div>
                     <div className="mt-1 flex gap-2">
                       {samplePhotos.map((item) => (
-                        <img
+                        <Image
                           key={item.s3Key}
+                          width={56}
+                          height={56}
                           crossOrigin="anonymous"
                           className="h-14 w-14 cursor-pointer rounded border object-cover"
                           src={item.url}
+                          alt={item.s3Key}
                           onClick={() => {
                             setSelectedPhotoUrl(item.url);
                             setSelectedPhotoFile(null);
@@ -450,7 +444,7 @@ export function PhotoToVideoModal({
               </div>
 
               <div className="flex gap-6">
-                {/* <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <Switch
                     checked={experimentalModel}
                     onCheckedChange={setExperimentalModel}
@@ -458,7 +452,7 @@ export function PhotoToVideoModal({
                   <span className="text-xs text-gray-700">
                     Experimental model
                   </span>
-                </div> */}
+                </div>
                 {experimentalModel && (
                   <div className="flex items-center gap-2">
                     <Switch

@@ -12,6 +12,9 @@ const serverSchema = z.object({
   TEXT_TO_SPEECH_ENDPOINT: z.string().url(),
   PHOTO_TO_VIDEO_ENDPOINT: z.string().url(),
   FILE_TO_S3_ENDPOINT: z.string().url(),
+  NEXT_PUBLIC_SMALL_CREDIT_PACK_ID: z.string(),
+  NEXT_PUBLIC_MEDIUM_CREDIT_PACK_ID: z.string(),
+  NEXT_PUBLIC_LARGE_CREDIT_PACK_ID: z.string(), 
 });
 
 export const env = serverSchema.parse(process.env);

@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "crypto";
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { env } from "~/env";
 import { auth } from "~/lib/auth";
@@ -43,10 +43,7 @@ export async function getPresignedUrl(
       accessKeyId: env.AWS_ACCESS_KEY_ID,
       secretAccessKey: env.AWS_SECRET_ACCESS_KEY_ID,
     },
-
   });
-
-
 
   const command = new PutObjectCommand({
     Bucket: env.S3_BUCKET_NAME,
@@ -57,25 +54,6 @@ export async function getPresignedUrl(
   const url = await getSignedUrl(s3Client, command, { expiresIn: 600 });
 
   return { url, key };
-}
-
-export async function getPresignedGetUrl(key: string) {
-  const s3Client = new S3Client({
-    region: env.AWS_REGION,
-    credentials: {
-      accessKeyId: env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: env.AWS_SECRET_ACCESS_KEY_ID,
-    },
-  });
-
-  const command = new GetObjectCommand({
-    Bucket: env.S3_BUCKET_NAME,
-    Key: key,
-  });
-
-  const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
-
-  return url;
 }
 
 export interface GenerateRequest {

@@ -81,7 +81,6 @@ export default function RootLayout({
                         {/* UserButton provided by Better Auth UI */}
                         {/* the UserButton will handle sign in/out/profile */
                         /* Keep it server-safe: it's a client component */}
-                        {/* @ts-ignore */}
                         <div>
                           {/* We keep the UserButton usage inside AppSidebar footer too — this is a lightweight duplicate for convenience */}
                         </div>
